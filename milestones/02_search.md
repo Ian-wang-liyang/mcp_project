@@ -1,7 +1,7 @@
 # Milestone 2: Code search
 
 **Goal:** give Claude two tools for finding its way around a repo, `list_files` and `search_code`, and make sure neither can read anything outside the workspace.
-**Time:** about 60 minutes. **Check:** `make check M=02`
+**Time:** about 70 minutes. **Check:** `make check M=02`
 
 ## What you'll learn
 
@@ -73,6 +73,7 @@ tool returns absolute paths.
    | call | the error text must... |
    |---|---|
    | `list_files` with a `dir` that escapes the root: `..`, `calc/../..`, `/etc`, any absolute path | mention `outside the workspace` |
+   | `list_files` with a `dir` that leads out through a symlink: `link` or `link/sub`, where `link` points outside the root | mention `outside the workspace` |
    | `list_files` with a `dir` that doesn't exist, or that is a file | (any message) |
    | `search_code` with an invalid regexp, e.g. `func (` | include the `regexp` error, e.g. `missing closing )` |
    | `search_code` with an empty `query` | (any message): an empty regexp matches every line |
@@ -90,9 +91,10 @@ tool returns absolute paths.
 3. Write a walk helper that both tools share. It takes a start directory and a glob, and returns sorted, root-relative
    slash paths. Use `filepath.WalkDir` and `filepath.SkipDir`. Then finish `list_files` with `resolve`, `os.Stat` and the
    helper.
-4. Write `search_code`. Check the inputs first: empty query, `regexp.Compile`, the glob. Then walk, read each file, skip
+4. Make `TestListFilesSymlinkOutside` pass: check where `dir` really is before walking it (see the symlink hint).
+5. Write `search_code`. Check the inputs first: empty query, `regexp.Compile`, the glob. Then walk, read each file, skip
    binaries, and scan its lines.
-5. Get `truncated` right. Stop when you find match number `max_results + 1`, not when you reach `max_results`.
+6. Get `truncated` right. Stop when you find match number `max_results + 1`, not when you reach `max_results`.
 
 ## Hints
 
@@ -159,7 +161,7 @@ to read those.
 Skipping symlinks during the walk isn't enough for `list_files`. If the workspace has `link -> /etc`, then
 `dir: "link/sub"` passes the lexical check, and the OS follows `link` when the walk starts, so you'd list files
 outside the workspace. Before walking, `filepath.EvalSymlinks(dir)` and check that the result is still under the
-root (`filepath.Rel` plus `filepath.IsLocal`). The tests don't check this, but a malicious repo could.
+root (`filepath.Rel` plus `filepath.IsLocal`). `TestListFilesSymlinkOutside` checks this.
 </details>
 
 <details><summary>Nil vs empty slices</summary>

@@ -192,6 +192,26 @@ func TestListFilesRejectsBadInput(t *testing.T) {
 		"check the glob up front: path.Match(pattern, \"\") returns path.ErrBadPattern")
 }
 
+// list_files refuses a dir that leads out of the workspace through a symlink, even though the path itself looks local.
+func TestListFilesSymlinkOutside(t *testing.T) {
+	ws := harness.Workspace(t)
+	outside := filepath.Join(filepath.Dir(ws), "outside")
+	writeFile(t, outside, "sub/secret.txt", "s3cret\n")
+	if err := os.Symlink(outside, filepath.Join(ws, "link")); err != nil {
+		t.Skipf("cannot create a symlink here: %v", err)
+	}
+	cs := harness.Connect(t, server.Config{Root: ws}, nil)
+
+	for _, dir := range []string{"link", "link/sub"} {
+		res := expectToolError(t, cs, "list_files", map[string]any{"dir": dir}, "outside the workspace",
+			"link is a symlink to a directory outside the root, which a lexical path check can't see; "+
+				"filepath.EvalSymlinks the dir and check the result is still under the root")
+		if res != nil && strings.Contains(harness.Text(res), "secret.txt") {
+			t.Errorf("list_files(dir %q) leaked a file outside the workspace: %s", dir, harness.Text(res))
+		}
+	}
+}
+
 // search_code returns path, 1-based line and the line's text for every matching line.
 func TestSearchCode(t *testing.T) {
 	ws := harness.Workspace(t)

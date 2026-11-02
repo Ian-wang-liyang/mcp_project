@@ -38,7 +38,7 @@ rather than Unix process handling.
 | # | Brief | You build | MCP concepts | Time |
 |---|---|---|---|---|
 | 1 | `01_hello.md` | `workspace_info` tool; stdio binary registered in Claude Code | server, tools, handshake, stdio | 45 min |
-| 2 | `02_search.md` | `list_files`, `search_code`, with paths kept inside the workspace | input schemas, structured output, tool errors | 60 min |
+| 2 | `02_search.md` | `list_files`, `search_code`, with paths kept inside the workspace | input schemas, structured output, tool errors | 70 min |
 | 3 | `03_files_prompts.md` | files as `workspace:///…` resources; a `review_file` prompt | resources, templates, blobs, prompts, completion | 60 min |
 | 4 | `04_test_runner.md` | `run_tests` on `go test -json` with live progress and real cancellation | progress, logging, cancellation, timeouts | 50 min |
 | 5 | `05_ship.md` | audit middleware, read-only mode, Streamable HTTP mode | middleware, HTTP transport, deployment | 60 min |
