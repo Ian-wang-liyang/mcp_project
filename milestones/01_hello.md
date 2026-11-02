@@ -9,8 +9,8 @@
 - What the handshake gives a client: `serverInfo`, capabilities, `instructions`.
 - The stdio transport, and why **nothing but protocol may go to stdout**.
 
-New to these ideas? Read the primer at the top of [`lessons/10_mcp_basics.md`](../lessons/10_mcp_basics.md) first (about 10 minutes).
-For tool details, see lessons 11.1 and 11.2 in [`lessons/11_mcp_tools.md`](../lessons/11_mcp_tools.md).
+New to these ideas? Read the primer at the top of [`lessons/02_mcp_basics.md`](../lessons/02_mcp_basics.md) first (about 10 minutes).
+For tool details, see lessons 3.1 and 3.2 in [`lessons/03_mcp_tools.md`](../lessons/03_mcp_tools.md).
 
 ## Requirements
 

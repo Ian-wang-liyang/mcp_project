@@ -1,4 +1,4 @@
-# Module 15: requests that flow server → client
+# Module 07: requests that flow server → client
 
 ## Primer: when the server asks the client
 
@@ -80,7 +80,7 @@ function or a resumable generator.
 **READ NEXT:** docs/client.md#roots, #sampling, #elicitation and #multi-round-trip-requests, then
 docs/server.md#multi-round-trip-requests in the SDK repo.
 
-## Lesson 15.1: NewRootsClient
+## Lesson 7.1: NewRootsClient
 
 **CONCEPT:** the client side of roots
 
@@ -107,7 +107,7 @@ func NewRootsClient(uris ...string) *mcp.Client {
 }
 ```
 
-## Lesson 15.2: AddListRootsTool
+## Lesson 7.2: AddListRootsTool
 
 **CONCEPT:** your first multi round-trip handler
 
@@ -161,7 +161,7 @@ func textResult(text string) *mcp.CallToolResult {
 }
 ```
 
-## Lesson 15.3: AddSummarizeTool
+## Lesson 7.3: AddSummarizeTool
 
 **CONCEPT:** sampling, i.e. borrowing the client's LLM
 
@@ -228,7 +228,7 @@ func summarize(ctx context.Context, req *mcp.CallToolRequest, in SummarizeInput)
 }
 ```
 
-## Lesson 15.4: AddDeleteTool
+## Lesson 7.4: AddDeleteTool
 
 **CONCEPT:** elicitation, i.e. asking the user
 
@@ -301,7 +301,7 @@ func AddDeleteTool(s *mcp.Server, onDelete func(path string)) {
 }
 ```
 
-## Lesson 15.5: AddSafeSummarizeTool (bonus)
+## Lesson 7.5: AddSafeSummarizeTool (bonus)
 
 **CONCEPT:** checking the client's capabilities first
 
@@ -319,7 +319,7 @@ so the model can't see what went wrong or work around it. Check first, then degr
 the client can sample, behave exactly like "summarize". If it can't, don't ask: reply with the
 first FallbackRunes runes of the text followed by "...", or the whole text if it has at most
 FallbackRunes runes.
-**HINT:** runes, not bytes: []rune(s) or utf8.RuneCountInString. To reuse 15.3, move
+**HINT:** runes, not bytes: []rune(s) or utf8.RuneCountInString. To reuse 7.3, move
 its handler into a named func and call it from both tools.
 
 **Worked example:**

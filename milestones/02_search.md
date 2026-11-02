@@ -10,8 +10,8 @@
 - The difference between a **tool error** and a **protocol error**. A tool error is an `IsError` result that the model reads and can recover from. A protocol error means the call itself failed.
 - **Path safety.** Any tool that takes a path from the model must refuse paths outside the workspace.
 
-For the schema and output rules, see lessons 11.1 and 11.2 in [`lessons/11_mcp_tools.md`](../lessons/11_mcp_tools.md).
-For tool errors, see 11.3 in the same file. For annotations, see 11.5.
+For the schema and output rules, see lessons 3.1 and 3.2 in [`lessons/03_mcp_tools.md`](../lessons/03_mcp_tools.md).
+For tool errors, see 3.3 in the same file. For annotations, see 3.5.
 
 ### Why path safety matters: the confused deputy
 

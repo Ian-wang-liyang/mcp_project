@@ -1,4 +1,4 @@
-# Module 08: mutexes, sync.Once, context cancellation
+# Module 01: mutexes, sync.Once, context cancellation
 
 ## Primer: sync & context
 
@@ -36,7 +36,7 @@ Cancelling a context cancels every context derived from it.
 
 **FROM JS:** ctx is the AbortController/AbortSignal of Go, but it's passed explicitly through every call.
 
-## Lesson 8.1: SafeCounter
+## Lesson 1.1: SafeCounter
 
 **CONCEPT:** protecting shared state with a mutex
 
@@ -77,7 +77,7 @@ func (c *SafeCounter) Get(key string) int {
 }
 ```
 
-## Lesson 8.2: FetchAll
+## Lesson 1.2: FetchAll
 
 **CONCEPT:** context cancellation across several goroutines
 
@@ -131,7 +131,7 @@ func FetchAll(ctx context.Context, ids []int, fetch Fetcher) ([]string, error) {
 }
 ```
 
-## Lesson 8.3: LazyValue (bonus)
+## Lesson 1.3: LazyValue (bonus)
 
 **CONCEPT:** sync.Once
 

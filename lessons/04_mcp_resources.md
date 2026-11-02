@@ -1,4 +1,4 @@
-# Module 12: MCP resources
+# Module 04: MCP resources
 
 ## Primer: resources
 
@@ -35,7 +35,7 @@ content block leaves URI or MIMEType empty, the SDK copies them from the registr
 **READ NEXT:** docs/server.md#resources (including "Binary resources" and "Resource subscriptions")
 in the SDK repo (github.com/modelcontextprotocol/go-sdk/tree/main/docs).
 
-## Lesson 12.1: AddReadme
+## Lesson 4.1: AddReadme
 
 **CONCEPT:** a static text resource
 
@@ -75,7 +75,7 @@ func AddReadme(s *mcp.Server) {
 }
 ```
 
-## Lesson 12.2: AddNotesTemplate
+## Lesson 4.2: AddNotesTemplate
 
 **CONCEPT:** resource templates (and "not found")
 
@@ -125,7 +125,7 @@ func AddNotesTemplate(s *mcp.Server, notes map[string]string) {
 }
 ```
 
-## Lesson 12.3: AddLogo
+## Lesson 4.3: AddLogo
 
 **CONCEPT:** binary resources
 
@@ -160,7 +160,7 @@ func AddLogo(s *mcp.Server) {
 }
 ```
 
-## Lesson 12.4: ReadNote
+## Lesson 4.4: ReadNote
 
 **CONCEPT:** recognizing "not found" on the client
 
@@ -202,7 +202,7 @@ func ReadNote(ctx context.Context, cs *mcp.ClientSession, id string) (text strin
 }
 ```
 
-## Lesson 12.5: NewConfigServer (bonus)
+## Lesson 4.5: NewConfigServer (bonus)
 
 **CONCEPT:** resource subscriptions, server side
 
@@ -258,7 +258,7 @@ func NewConfigServer(events chan<- string) *mcp.Server {
 }
 ```
 
-## Lesson 12.6: WatchOptions (bonus)
+## Lesson 4.6: WatchOptions (bonus)
 
 **CONCEPT:** resource subscriptions, client side
 

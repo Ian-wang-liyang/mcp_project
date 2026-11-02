@@ -1,4 +1,4 @@
-# Module 17: real transports and a complete notes server
+# Module 09: real transports and a complete notes server
 
 ## Primer: leaving the in-memory sandbox
 
@@ -43,7 +43,7 @@ The *http.Request argument lets you choose per request, e.g. a different server 
 **STATELESS MODE:** &mcp.StreamableHTTPOptions{Stateless: true}. No Mcp-Session-Id; each request gets
 a temporary session with default initialization parameters, so any replica behind a load balancer
 can answer it. Cost: the server can't send REQUESTS to the client (there's nowhere for the reply
-to go), so sampling and elicitation (module 15) are rejected. GET/DELETE answer 405. The newest
+to go), so sampling and elicitation (module 7) are rejected. GET/DELETE answer 405. The newest
 protocol revision (2026-07-28) is accepted ONLY by stateless handlers. Example:
 examples/server/distributed.
 
@@ -84,7 +84,7 @@ side is a plain http.Handler, so it composes with any router or middleware (http
 docs/protocol.md#security, and examples/http in the SDK repo
 (github.com/modelcontextprotocol/go-sdk/tree/main/docs).
 
-## Lesson 17.1: Streamable HTTP
+## Lesson 9.1: Streamable HTTP
 
 **CONCEPT:** serving and dialing MCP over HTTP
 
@@ -125,12 +125,12 @@ func ConnectHTTP(ctx context.Context, url string) (*mcp.ClientSession, error) {
 }
 ```
 
-## Lesson 17.2: NewNotesServer
+## Lesson 9.2: NewNotesServer
 
 **CONCEPT:** one server, every feature, shared state
 
 ```
-This is modules 10–13 in one place. The pieces you need:
+This is modules 2–5 in one place. The pieces you need:
   mcp.AddTool(s, &mcp.Tool{...}, func(ctx, req, in In) (*mcp.CallToolResult, Out, error))
       return nil, out, nil  → the SDK sends out as StructuredContent (checked against the output
                               schema inferred from Out) plus a JSON text copy in Content
@@ -146,7 +146,7 @@ This is modules 10–13 in one place. The pieces you need:
 ```
 The SDK handles tools/call requests CONCURRENTLY, from every connected session at once (think
 HTTP: one server, many clients). Every handler that touches the store runs on its own goroutine,
-so the store needs a mutex (module 08), held in EVERY method, reads included.
+so the store needs a mutex (module 01), held in EVERY method, reads included.
 ```
 
 **TASK:** Return a server (Name "notes", Version "v1.0.0") with an in-memory note store and:
@@ -292,7 +292,7 @@ func NewNotesServer() *mcp.Server {
 }
 ```
 
-## Lesson 17.3: Serve over stdio
+## Lesson 9.3: Serve over stdio
 
 **CONCEPT:** stdio is just two pipes
 
@@ -319,7 +319,7 @@ cmd/notes-mcp/main.go (already written) is the whole program around this functio
 **TASK:** Serve s over in/out and block until the client disconnects or ctx is cancelled. Return what
 Run returns.
 
-TRY IT (after 17.2 and 17.3 pass), from the repo root:
+TRY IT (after 9.2 and 9.3 pass), from the repo root:
 
 ```
 go build -o bin/notes-mcp ./cmd/notes-mcp
@@ -336,7 +336,7 @@ func Serve(ctx context.Context, s *mcp.Server, in io.ReadCloser, out io.WriteClo
 }
 ```
 
-## Lesson 17.4: ConnectCommand (bonus)
+## Lesson 9.4: ConnectCommand (bonus)
 
 **CONCEPT:** the host's side of stdio
 

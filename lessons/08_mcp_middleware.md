@@ -1,4 +1,4 @@
-# Module 16: middleware around MCP messages
+# Module 08: middleware around MCP messages
 
 ## Primer: middleware
 
@@ -56,7 +56,7 @@ when the transport is HTTP.
 
 What middleware sees depends on the protocol version. On 2026-07-28 (the default) a session
 opens with "server/discover"; older clients send "initialize" and then
-"notifications/initialized". And on 2026-07-28 a multi round-trip tool call (module 15)
+"notifications/initialized". And on 2026-07-28 a multi round-trip tool call (module 7)
 reaches the server's receiving middleware once per round.
 
 **FROM PYTHON/JS:** this is Express/Koa middleware (`(req, res, next) => ...`), or a Python
@@ -66,7 +66,7 @@ decorator syntax: you wrap functions by hand, and `next` is an explicit argument
 **READ NEXT:** examples/server/middleware, examples/client/middleware and examples/server/custom-method
 in the SDK repo, and the Middleware docs at pkg.go.dev/github.com/modelcontextprotocol/go-sdk/mcp.
 
-## Lesson 16.1: MethodRecorder
+## Lesson 8.1: MethodRecorder
 
 **CONCEPT:** a middleware that keeps state
 
@@ -82,7 +82,7 @@ struct can hand out a middleware bound to itself:
       }
   }
 The SDK handles requests concurrently, so the inner func runs on many goroutines at once.
-Guard shared state with the mutex (module 08) and run the tests with -race.
+Guard shared state with the mutex (module 01) and run the tests with -race.
 ```
 
 **TASK:** Middleware returns a middleware that appends every method name it sees to the recorder,
@@ -116,7 +116,7 @@ func (r *MethodRecorder) Methods() []string {
 }
 ```
 
-## Lesson 16.2: DenyTools
+## Lesson 8.2: DenyTools
 
 **CONCEPT:** rejecting a request before it reaches the handler
 
@@ -128,7 +128,7 @@ Return early WITHOUT calling next, and the handler never runs:
   return next(ctx, method, req)          // everything else passes through untouched
 An error returned here reaches the client as a JSON-RPC error: cs.CallTool returns err != nil.
 That's right for policy ("you may not"). A tool result with IsError is for the tool itself
-failing (module 11). Use comma-ok on the type assertion: most requests are not tool calls,
+failing (module 3). Use comma-ok on the type assertion: most requests are not tool calls,
 and a bare req.(*mcp.CallToolRequest) would panic on them.
 ```
 
@@ -156,7 +156,7 @@ func DenyTools(names ...string) mcp.Middleware {
 }
 ```
 
-## Lesson 16.3: HideTools (bonus)
+## Lesson 8.3: HideTools (bonus)
 
 **CONCEPT:** rewriting the response on the way out
 
@@ -201,14 +201,14 @@ func HideTools(names ...string) mcp.Middleware {
 }
 ```
 
-## Lesson 16.4: SendCounter (bonus)
+## Lesson 8.4: SendCounter (bonus)
 
 **CONCEPT:** client sending middleware
 
 ```
 client.AddSendingMiddleware(m) wraps every request the client SENDS, which makes it the place
 for metrics, tracing, or stamping something on outgoing params. It is installed OUTSIDE the
-client's multi round-trip loop (module 15). One cs.CallTool is one tools/call here, even if
+client's multi round-trip loop (module 7). One cs.CallTool is one tools/call here, even if
 the client actually sent it twice to answer the server's questions. Server receiving
 middleware on a 2026-07-28 session sees both rounds.
 ```
@@ -247,7 +247,7 @@ func (c *SendCounter) Count(method string) int {
 }
 ```
 
-## Lesson 16.5: a custom method (bonus)
+## Lesson 8.5: a custom method (bonus)
 
 **CONCEPT:** JSON-RPC methods outside the MCP spec
 

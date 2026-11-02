@@ -1,4 +1,4 @@
-# Module 14: the client side of MCP and the protocol utilities (pagination, progress, logging, cancellation, list-changed notifications)
+# Module 06: the client side of MCP and the protocol utilities (pagination, progress, logging, cancellation, list-changed notifications)
 
 ## Primer: clients and protocol utilities
 
@@ -22,7 +22,7 @@ req.Params holds the notification's data. req.Session is the *mcp.ClientSession 
 ```
 
 The SDK runs these callbacks one at a time, in arrival order. Keep them short and don't block:
-hand data to the rest of your program over a channel, or behind a mutex (module 08).
+hand data to the rest of your program over a channel, or behind a mutex (module 01).
 
 A notification about a request can even arrive AFTER that request's reply: CallTool may return
 before your ProgressNotificationHandler has run. The tests therefore WAIT for notifications on
@@ -31,17 +31,17 @@ channels with a timeout. Never sleep and hope.
 The utilities in this module, all from the MCP spec's "utilities" sections:
 
 ```
-PAGINATION    list results come in pages, joined by an opaque cursor             (14.1)
-PROGRESS      the server reports how far a long request has got                  (14.2)
-LOGGING       the server sends log lines to the client, filtered by level        (14.3)
-CANCELLATION  the client gives up on a request, and the server stops working     (14.4)
-LIST CHANGED  the server says its tool list changed, and the client re-lists     (14.5)
+PAGINATION    list results come in pages, joined by an opaque cursor             (6.1)
+PROGRESS      the server reports how far a long request has got                  (6.2)
+LOGGING       the server sends log lines to the client, filtered by level        (6.3)
+CANCELLATION  the client gives up on a request, and the server stops working     (6.4)
+LIST CHANGED  the server says its tool list changed, and the client re-lists     (6.5)
 ```
 
 A NOTE ON PROTOCOL VERSIONS. SDK v1.8.0 speaks MCP up to 2026-07-28, and its clients
 negotiate that version by default. Check yours with cs.InitializeResult().ProtocolVersion.
 You'll often meet servers and hosts on 2025-11-25 or older. Most of this module works the same
-on both. Logging doesn't (see 14.3), so the logging tests run on both versions.
+on both. Logging doesn't (see 6.3), so the logging tests run on both versions.
 
 **FROM PYTHON/JS:** the Python SDK's ClientSession takes logging_callback / message_handler arguments,
 and the TS SDK uses client.setNotificationHandler(Schema, fn). Same idea: callbacks you register
@@ -51,7 +51,7 @@ up front. Go's context.Context replaces the TS AbortSignal for cancellation.
 docs/server.md#pagination, docs/server.md#logging and docs/server.md#list-changed-notifications
 (github.com/modelcontextprotocol/go-sdk/tree/main/docs).
 
-## Lesson 14.1: AllToolNames
+## Lesson 6.1: AllToolNames
 
 **CONCEPT:** pagination and range-over-func iterators
 
@@ -96,7 +96,7 @@ func AllToolNames(ctx context.Context, cs *mcp.ClientSession) ([]string, error) 
 }
 ```
 
-## Lesson 14.2: AddBatchTool
+## Lesson 6.2: AddBatchTool
 
 **CONCEPT:** progress notifications
 
@@ -156,7 +156,7 @@ func AddBatchTool(s *mcp.Server) {
 }
 ```
 
-## Lesson 14.3: AddImportTool and CallWithLogLevel
+## Lesson 6.3: AddImportTool and CallWithLogLevel
 
 **CONCEPT:** server → client logging, and where the level comes from
 
@@ -247,7 +247,7 @@ func CallWithLogLevel(ctx context.Context, cs *mcp.ClientSession, params *mcp.Ca
 }
 ```
 
-## Lesson 14.4: AddSlowTool and CallWithTimeout
+## Lesson 6.4: AddSlowTool and CallWithTimeout
 
 **CONCEPT:** cancellation crosses the wire
 
@@ -280,7 +280,7 @@ TASK (b): CallWithTimeout calls the tool described by params, but gives up after
 CallTool's error (which wraps context.DeadlineExceeded) if the call takes longer.
 ```
 
-**HINT:** context.WithTimeout(ctx, d) returns a cancel func. defer it (module 08).
+**HINT:** context.WithTimeout(ctx, d) returns a cancel func. defer it (module 01).
 
 **Worked example:**
 
@@ -316,7 +316,7 @@ func CallWithTimeout(ctx context.Context, cs *mcp.ClientSession, params *mcp.Cal
 }
 ```
 
-## Lesson 14.5: ToolCache (bonus)
+## Lesson 6.5: ToolCache (bonus)
 
 **CONCEPT:** keeping a client-side cache fresh with list-changed notifications
 

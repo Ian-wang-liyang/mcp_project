@@ -23,11 +23,11 @@ code, and the same binary can serve Streamable HTTP so several clients can share
 - **Deployment:** installing the binary and registering an HTTP server with Claude Code.
 
 The lessons for this milestone:
-- Middleware: lessons 16.1 to 16.3 in [`lessons/16_mcp_middleware.md`](../lessons/16_mcp_middleware.md). Read its primer first.
-  16.1 is a stateful middleware with a mutex. 16.2 rejects a tool and 16.3 hides one. Compare both with read-only mode below.
-- HTTP: the primer of [`lessons/17_mcp_capstone.md`](../lessons/17_mcp_capstone.md), especially "Before you deploy over HTTP"
-  and the security checklist. Then lesson 17.1.
-- Mutexes: lesson 8.1 in [`lessons/08_sync_context.md`](../lessons/08_sync_context.md).
+- Middleware: lessons 8.1 to 8.3 in [`lessons/08_mcp_middleware.md`](../lessons/08_mcp_middleware.md). Read its primer first.
+  8.1 is a stateful middleware with a mutex. 8.2 rejects a tool and 8.3 hides one. Compare both with read-only mode below.
+- HTTP: the primer of [`lessons/09_mcp_capstone.md`](../lessons/09_mcp_capstone.md), especially "Before you deploy over HTTP"
+  and the security checklist. Then lesson 9.1.
+- Mutexes: lesson 1.1 in [`lessons/01_sync_context.md`](../lessons/01_sync_context.md).
 
 The SDK's own guides are `docs/protocol.md` (sections Streamable Transport, Stateless Mode, Security) and
 `examples/server/middleware` and `examples/http`.
@@ -157,7 +157,7 @@ deliberately takes a few milliseconds per `Write` and records any overlap.
 
 <details><summary>Read-only: why not just hide or deny run_tests?</summary>
 
-Lessons 16.2 and 16.3 showed both. Each has a hole:
+Lessons 8.2 and 8.3 showed both. Each has a hole:
 - **Hiding** it from `tools/list` stops the model from *seeing* it, but a client that knows the name can still call it.
 - **Denying** it in middleware works, but every new dangerous tool has to be added to a list, and forgetting one fails open.
 

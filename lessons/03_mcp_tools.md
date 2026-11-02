@@ -1,4 +1,4 @@
-# Module 11: MCP tools in depth
+# Module 03: MCP tools in depth
 
 ## Primer: tools in depth
 
@@ -33,7 +33,7 @@ otherwise             success: read res.Content and/or res.StructuredContent
 ```
 
 The lower-level server.AddTool takes a raw mcp.ToolHandler and does NONE of that: you write the
-schema, unmarshal the arguments, and set IsError yourself (BONUS 11.6).
+schema, unmarshal the arguments, and set IsError yourself (BONUS 3.6).
 
 **FROM PYTHON/JS:** FastMCP builds the schema from type hints + docstrings, the TS SDK from a zod
 object. Go builds it from struct fields + tags, via github.com/google/jsonschema-go.
@@ -41,7 +41,7 @@ object. Go builds it from struct fields + tags, via github.com/google/jsonschema
 **READ NEXT:** docs/server.md#tools and docs/server.md#tool-result-content in the SDK repo
 (github.com/modelcontextprotocol/go-sdk/tree/main/docs).
 
-## Lesson 11.1: AddSearchTool
+## Lesson 3.1: AddSearchTool
 
 **CONCEPT:** input schemas are inferred from struct tags
 
@@ -108,7 +108,7 @@ func AddSearchTool(s *mcp.Server) {
 }
 ```
 
-## Lesson 11.2: AddStatsTool
+## Lesson 3.2: AddStatsTool
 
 **CONCEPT:** structured output
 
@@ -160,7 +160,7 @@ func AddStatsTool(s *mcp.Server) {
 }
 ```
 
-## Lesson 11.3: AddDivideTool
+## Lesson 3.3: AddDivideTool
 
 **CONCEPT:** tool errors vs protocol errors
 
@@ -222,7 +222,7 @@ func AddDivideTool(s *mcp.Server) {
 }
 ```
 
-## Lesson 11.4: CallStats
+## Lesson 3.4: CallStats
 
 **CONCEPT:** reading structured output on the client
 
@@ -279,7 +279,7 @@ func CallStats(ctx context.Context, cs *mcp.ClientSession, numbers []float64) (S
 }
 ```
 
-## Lesson 11.5: AddDeleteNoteTool (bonus)
+## Lesson 3.5: AddDeleteNoteTool (bonus)
 
 **CONCEPT:** tool annotations
 
@@ -324,7 +324,7 @@ func AddDeleteNoteTool(s *mcp.Server) {
 }
 ```
 
-## Lesson 11.6: AddRawEchoTool (bonus)
+## Lesson 3.6: AddRawEchoTool (bonus)
 
 **CONCEPT:** the low-level server.AddTool
 

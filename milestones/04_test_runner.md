@@ -23,9 +23,9 @@
   - grouping output per test with maps and `strings.Builder`
   - `context.WithTimeout`, and telling your own timeout apart from the caller's cancel
 
-Progress, logging and cancellation are lessons 14.2, 14.3 and 14.4 in [`lessons/14_mcp_client.md`](../lessons/14_mcp_client.md).
+Progress, logging and cancellation are lessons 6.2, 6.3 and 6.4 in [`lessons/06_mcp_client.md`](../lessons/06_mcp_client.md).
 Read the "NOTE ON PROTOCOL VERSIONS" in that module's primer again, because it matters for logging.
-For `context.WithTimeout`, `ctx.Done()` and `ctx.Err()`, see the primer of [`lessons/08_sync_context.md`](../lessons/08_sync_context.md).
+For `context.WithTimeout`, `ctx.Done()` and `ctx.Err()`, see the primer of [`lessons/01_sync_context.md`](../lessons/01_sync_context.md).
 
 ### What `gotest.Run` does for you
 

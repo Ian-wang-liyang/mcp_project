@@ -1,4 +1,4 @@
-# Module 10: your first MCP server and client
+# Module 02: your first MCP server and client
 
 ## Primer: what MCP is
 
@@ -46,7 +46,7 @@ The Go SDK fills in the server's capabilities for you: register a tool and the s
 PROTOCOL VERSIONS matter in a few places later on, and those modules say so:
 
 ```
-14 logging levels, 15 server→client requests, 17 stateless HTTP.
+6 logging levels, 7 server→client requests, 9 stateless HTTP.
 Real hosts may still negotiate an older version. 2026-07-28 also deprecates logging, roots and
 sampling; they still work and this track still teaches them.
 ```
@@ -71,7 +71,7 @@ so it uses GENERICS: mcp.AddTool infers the tool's JSON schema from your input s
 **READ NEXT:** docs/quick_start.md and docs/protocol.md#lifecycle in the SDK repo
 (github.com/modelcontextprotocol/go-sdk/tree/main/docs).
 
-## Lesson 10.1: NewHelloServer
+## Lesson 2.1: NewHelloServer
 
 **CONCEPT:** creating a server
 
@@ -91,7 +91,7 @@ func NewHelloServer() *mcp.Server {
 }
 ```
 
-## Lesson 10.2: ConnectInMemory
+## Lesson 2.2: ConnectInMemory
 
 **CONCEPT:** transports and sessions
 
@@ -120,7 +120,7 @@ func ConnectInMemory(ctx context.Context, server *mcp.Server) (*mcp.ClientSessio
 }
 ```
 
-## Lesson 10.3: AddGreetTool
+## Lesson 2.3: AddGreetTool
 
 **CONCEPT:** a typed tool handler
 
@@ -157,7 +157,7 @@ func AddGreetTool(s *mcp.Server) {
 }
 ```
 
-## Lesson 10.4: CallGreet
+## Lesson 2.4: CallGreet
 
 **CONCEPT:** calling a tool from the client
 
@@ -168,7 +168,7 @@ res, err := cs.CallTool(ctx, &mcp.CallToolParams{
 })
 err != nil       → the call itself failed (unknown tool, connection closed)
 res.IsError      → the tool reported a failure, OR the arguments didn't match its schema
-                   (module 11 covers the difference)
+                   (module 3 covers the difference)
 res.Content      → []mcp.Content, an interface; type-assert to read it:
     if tc, ok := res.Content[0].(*mcp.TextContent); ok { ... tc.Text ... }
 ```
@@ -201,7 +201,7 @@ func CallGreet(ctx context.Context, cs *mcp.ClientSession, name string) (string,
 }
 ```
 
-## Lesson 10.5: NewGuideServer (bonus)
+## Lesson 2.5: NewGuideServer (bonus)
 
 **CONCEPT:** server instructions
 

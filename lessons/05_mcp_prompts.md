@@ -1,4 +1,4 @@
-# Module 13: MCP prompts and argument completion
+# Module 05: MCP prompts and argument completion
 
 ## Primer: prompts
 
@@ -54,7 +54,7 @@ list yourself, and the handler reads the arguments out of a map.
 **READ NEXT:** docs/server.md#prompts and docs/server.md#completion in the SDK repo
 (github.com/modelcontextprotocol/go-sdk/tree/main/docs).
 
-## Lesson 13.1: AddCodeReviewPrompt
+## Lesson 5.1: AddCodeReviewPrompt
 
 **CONCEPT:** registering a prompt with required and optional arguments
 
@@ -67,7 +67,7 @@ The handler returns the expanded conversation:
           {Role: "user", Content: &mcp.TextContent{Text: "..."}},
       },
   }, nil
-Content is the same mcp.Content interface tools return (module 10), so a message could also
+Content is the same mcp.Content interface tools return (module 2), so a message could also
 carry an image or an embedded resource.
 Reading an optional argument: a missing map key gives "", the zero value. Reading from a nil
 map is fine too, so req.Params.Arguments["language"] never panics.
@@ -86,7 +86,7 @@ Arguments, in this order:
 Its handler returns ONE message with Role "user" and this text:
   language given:   "Please review this <language> code:\n\n<code>"
   language empty:   "Please review this code:\n\n<code>"
-(Exercise 13.2 handles a missing "code". You may ignore it here.)
+(Exercise 5.2 handles a missing "code". You may ignore it here.)
 ```
 
 **Worked example:**
@@ -116,7 +116,7 @@ func AddCodeReviewPrompt(s *mcp.Server) {
 }
 ```
 
-## Lesson 13.2: CheckRequired and AddDebugPrompt
+## Lesson 5.2: CheckRequired and AddDebugPrompt
 
 **CONCEPT:** multi-message prompts, and who enforces Required
 
@@ -200,7 +200,7 @@ func AddDebugPrompt(s *mcp.Server) {
 }
 ```
 
-## Lesson 13.3: CompleteLanguage (bonus)
+## Lesson 5.3: CompleteLanguage (bonus)
 
 **CONCEPT:** argument completion (server side)
 
@@ -246,7 +246,7 @@ func CompleteLanguage(ctx context.Context, req *mcp.CompleteRequest) (*mcp.Compl
 }
 ```
 
-## Lesson 13.4: SuggestLanguages (bonus)
+## Lesson 5.4: SuggestLanguages (bonus)
 
 **CONCEPT:** argument completion (client side)
 

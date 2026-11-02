@@ -18,10 +18,10 @@ says yes in a confirmation form. It falls back safely when the client can't ask.
 - **Path safety for writes:** the milestone 3 rules again, now with parent directories that may not exist yet.
 
 The lessons for this milestone:
-- Elicitation and MRTR: the primer of [`lessons/15_mcp_server_calls.md`](../lessons/15_mcp_server_calls.md) (the "MULTI
-  ROUND-TRIP REQUESTS" part), then lesson 15.4 (the "are you sure?" pattern) and lesson 15.5 (checking capabilities first).
+- Elicitation and MRTR: the primer of [`lessons/07_mcp_server_calls.md`](../lessons/07_mcp_server_calls.md) (the "MULTI
+  ROUND-TRIP REQUESTS" part), then lesson 7.4 (the "are you sure?" pattern) and lesson 7.5 (checking capabilities first).
   The m06 tests run every case on both 2025-11-25 and 2026-07-28, so your handler must work in both eras.
-- Annotations: lesson 11.5 in [`lessons/11_mcp_tools.md`](../lessons/11_mcp_tools.md).
+- Annotations: lesson 3.5 in [`lessons/03_mcp_tools.md`](../lessons/03_mcp_tools.md).
 - `os.Root`: your milestone 3 code, and its "symlink" hint.
 
 The SDK's own guide is `docs/server.md#multi-round-trip-requests` (and `docs/client.md#elicitation` for the other side).
@@ -40,7 +40,7 @@ different: those you enforce on the server, every time, whatever the client says
 
 ### What the two protocol versions look like
 
-Your handler is written once, in the MRTR style from module 15, and works with both:
+Your handler is written once, in the MRTR style from module 7, and works with both:
 
 ```
 2026-07-28 (newest)                               2025-11-25 (older clients)
@@ -233,7 +233,7 @@ If you run devmcp with `-audit`, look at the lines for `write_file` and count th
   `new`. Refuse it with an error if `old` appears zero times or more than once. Put a small unified diff in the
   confirmation message so the user sees what changes, not just a byte count. Keep the message short: hosts may
   truncate long ones.
-- **Bind the answer to the request.** Use `CallToolResult.RequestState` (module 15's primer): in round 1, return a
+- **Bind the answer to the request.** Use `CallToolResult.RequestState` (module 7's primer): in round 1, return a
   string that holds an HMAC of `path` and `content`. In round 2, refuse unless it matches. Then a retry with different
   content can't reuse an old "yes". It still doesn't stop a client that forges answers, so think about what it
   *does* buy you.

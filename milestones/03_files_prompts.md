@@ -14,9 +14,9 @@
 - **Bonus: argument completion.**
 
 The lessons for this milestone:
-- Resources: lessons 12.1 to 12.4 in [`lessons/12_mcp_resources.md`](../lessons/12_mcp_resources.md). They cover static resources,
+- Resources: lessons 4.1 to 4.4 in [`lessons/04_mcp_resources.md`](../lessons/04_mcp_resources.md). They cover static resources,
   templates and not-found, `Blob`, and recognizing not-found on the client.
-- Prompts: lessons 13.1 to 13.3 in [`lessons/13_mcp_prompts.md`](../lessons/13_mcp_prompts.md). They cover arguments, why `Required`
+- Prompts: lessons 5.1 to 5.3 in [`lessons/05_mcp_prompts.md`](../lessons/05_mcp_prompts.md). They cover arguments, why `Required`
   is not enforced for you, and completion.
 
 Read the primers at the top of those two files first if resources or prompts feel hazy.
@@ -192,7 +192,7 @@ Ask for a review and watch the file arrive as context, without Claude calling a 
 ## Stretch (optional, untested)
 
 - **Subscriptions.** Set `SubscribeHandler` and `UnsubscribeHandler`, watch subscribed files (polling `os.Stat` mod times
-  is fine), and call `s.ResourceUpdated` when one changes. See lesson 12.5 in [`lessons/12_mcp_resources.md`](../lessons/12_mcp_resources.md).
+  is fine), and call `s.ResourceUpdated` when one changes. See lesson 4.5 in [`lessons/04_mcp_resources.md`](../lessons/04_mcp_resources.md).
   A later milestone comes back to notifications.
 - **Resource links from tools.** Have milestone 2's `search_code` return `&mcp.ResourceLink{URI: "workspace:///" + path, Name: path}`
   content next to its structured output. The client can then open a hit as a resource instead of asking for another tool call.

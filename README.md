@@ -6,7 +6,7 @@ to the same codebase, and at the end of each one you can use the server for real
 
 It uses the official SDK, [`github.com/modelcontextprotocol/go-sdk`](https://github.com/modelcontextprotocol/go-sdk)
 (v1.8.0). You need basic Go and a rough idea of what MCP is. If MCP is new to you, read the primer at the top of
-[`lessons/10_mcp_basics.md`](lessons/10_mcp_basics.md) (10 minutes) before milestone 1.
+[`lessons/02_mcp_basics.md`](lessons/02_mcp_basics.md) (10 minutes) before milestone 1.
 
 **Budget:** about 4.5–5.5 hours for milestones 1–5, plus about an hour for the optional milestone 6.
 
