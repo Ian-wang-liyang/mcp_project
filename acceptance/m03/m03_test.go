@@ -178,6 +178,17 @@ func TestStaticResources(t *testing.T) {
 	if _, ok := listed2["workspace:///go.mod"]; !ok {
 		t.Error("without README.md, resources/list should still offer workspace:///go.mod")
 	}
+
+	// An external symlink must not advertise an unreadable resource or leak its size.
+	outside := filepath.Join(t.TempDir(), "README.md")
+	writeFile(t, outside, secretText)
+	if err := os.Symlink(outside, filepath.Join(ws2, "README.md")); err != nil {
+		t.Fatal(err)
+	}
+	listed3 := listResources(t, harness.Connect(t, server.Config{Root: ws2}, nil))
+	if _, ok := listed3["workspace:///README.md"]; ok {
+		t.Error("resources/list advertised README.md outside the workspace through a symlink")
+	}
 }
 
 // review_file is listed with a description and its two arguments, path (required) and focus (optional).
@@ -262,6 +273,33 @@ func TestReviewFilePromptErrors(t *testing.T) {
 	}
 }
 
+// A prompt's embedded URI must identify the same file when read back as a resource.
+func TestReviewFilePromptEscapedPath(t *testing.T) {
+	ws := harness.Workspace(t)
+	name := "notes/100%20ready #?.md"
+	const contents = "# A file with URI-reserved characters\n"
+	writeFile(t, filepath.Join(ws, name), contents)
+	cs := harness.Connect(t, server.Config{Root: ws}, nil)
+	res, err := getPrompt(cs, "review_file", map[string]string{"path": name})
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, embedded := splitMessages(t, res)
+	if embedded == nil {
+		t.Fatal("review_file returned no embedded resource")
+	}
+	if want := "workspace:///notes/100%2520ready%20%23%3F.md"; embedded.URI != want {
+		t.Errorf("embedded URI = %q, want %q", embedded.URI, want)
+	}
+	read, err := readOne(t, cs, embedded.URI)
+	if err != nil {
+		t.Fatalf("reading the embedded resource URI: %v", err)
+	}
+	if read.Text != contents || embedded.Text != contents {
+		t.Error("the prompt and its resource URI must return the same file contents")
+	}
+}
+
 // BONUS: completion suggests workspace file paths for review_file's path argument.
 func TestBonusPathCompletion(t *testing.T) {
 	ws := harness.Workspace(t)
@@ -309,8 +347,8 @@ func TestBonusPathCompletion(t *testing.T) {
 	}
 
 	got, err = completePath(cs, "review_file", "path", "zzz")
-	if err != nil || len(got.Values) != 0 {
-		t.Errorf("completing \"zzz\" = %v, %v; want no values and no error", got, err)
+	if err != nil || got.Values == nil || len(got.Values) != 0 {
+		t.Errorf("completing \"zzz\" = %#v, %v; want a non-nil empty Values slice and no error", got, err)
 	}
 	got, err = completePath(cs, "review_file", "focus", "")
 	if err != nil || len(got.Values) != 0 {

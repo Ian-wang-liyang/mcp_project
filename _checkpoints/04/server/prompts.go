@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/fs"
+	"net/url"
 	"path"
 	"path/filepath"
 	"slices"
@@ -30,7 +31,7 @@ func addPrompts(s *mcp.Server, ws *workspace) {
 			return nil, &jsonrpc.Error{Code: jsonrpc.CodeInvalidParams, Message: `missing required argument "path"`}
 		}
 		p = path.Clean(p)
-		uri := workspaceURIPrefix + p
+		uri := workspaceURIPrefix + (&url.URL{Path: p}).EscapedPath()
 		contents, err := readWorkspaceFile(ws, p, uri)
 		if err != nil {
 			return nil, &jsonrpc.Error{Code: jsonrpc.CodeInvalidParams, Message: fmt.Sprintf("cannot review %q: %v", p, err)}
@@ -84,7 +85,7 @@ func completionHandler(ws *workspace) func(context.Context, *mcp.CompleteRequest
 // filePathsWithPrefix returns the slash-separated paths of the workspace's regular files that start with
 // prefix, sorted. Hidden entries (names starting with ".", like .git) are skipped.
 func filePathsWithPrefix(ctx context.Context, ws *workspace, prefix string) ([]string, error) {
-	var out []string
+	out := []string{}
 	err := filepath.WalkDir(ws.root, func(p string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return nil // unreadable entry: skip it, keep going

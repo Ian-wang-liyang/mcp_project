@@ -31,8 +31,13 @@ func addResources(s *mcp.Server, ws *workspace) {
 		Title:       "Workspace file",
 		Description: "Any file in the workspace, by its slash-separated path relative to the root.",
 	}, h)
+	root, err := os.OpenRoot(ws.root)
+	if err != nil {
+		return
+	}
+	defer root.Close()
 	for _, name := range staticResourceFiles {
-		info, err := os.Stat(filepath.Join(ws.root, name))
+		info, err := root.Stat(name)
 		if err != nil || !info.Mode().IsRegular() {
 			continue
 		}

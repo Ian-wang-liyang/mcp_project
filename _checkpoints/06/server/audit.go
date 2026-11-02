@@ -21,8 +21,8 @@ type auditEntry struct {
 // auditMiddleware returns a receiving middleware that writes one JSON line to w for every tools/call.
 //
 // The SDK runs requests concurrently (and on HTTP, from many clients at once), so this function's
-// inner closure runs on many goroutines. w is usually a plain *os.File or bytes.Buffer, which is not
-// safe for that: the mutex makes each line one uninterrupted Write.
+// inner closure runs on many goroutines. w may be a bytes.Buffer or another writer that is not
+// safe for concurrent use. The mutex makes each line one uninterrupted Write.
 func auditMiddleware(w io.Writer) mcp.Middleware {
 	var mu sync.Mutex
 	return func(next mcp.MethodHandler) mcp.MethodHandler {

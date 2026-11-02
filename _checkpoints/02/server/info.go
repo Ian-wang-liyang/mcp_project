@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"context"
 	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/modelcontextprotocol/go-sdk/mcp"
@@ -23,7 +22,7 @@ func addInfoTool(s *mcp.Server, ws *workspace) {
 		Annotations: &mcp.ToolAnnotations{ReadOnlyHint: true},
 	}, func(ctx context.Context, req *mcp.CallToolRequest, _ struct{}) (*mcp.CallToolResult, workspaceInfo, error) {
 		info := workspaceInfo{Root: ws.root}
-		f, err := os.Open(filepath.Join(ws.root, "go.mod"))
+		f, err := os.OpenInRoot(ws.root, "go.mod")
 		if os.IsNotExist(err) {
 			return nil, info, nil
 		}

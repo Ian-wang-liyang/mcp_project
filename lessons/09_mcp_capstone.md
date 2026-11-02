@@ -311,22 +311,19 @@ Compare server.Connect, which returns at once and leaves the session running.
 ```
 
 ```
-cmd/notes-mcp/main.go (already written) is the whole program around this function:
+In a standalone notes app, main would call these helpers:
   ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
-  mcpcapstone.Serve(ctx, mcpcapstone.NewNotesServer(), os.Stdin, os.Stdout)
+  defer stop()
+  if err := Serve(ctx, NewNotesServer(), os.Stdin, os.Stdout); err != nil {
+      log.Print(err) // stderr: stdout carries the protocol
+  }
 ```
 
 **TASK:** Serve s over in/out and block until the client disconnects or ctx is cancelled. Return what
 Run returns.
 
-TRY IT (after 9.2 and 9.3 pass), from the repo root:
-
-```
-go build -o bin/notes-mcp ./cmd/notes-mcp
-claude mcp add notes -- "$PWD/bin/notes-mcp"            # absolute path: works from any directory
-npx @modelcontextprotocol/inspector ./bin/notes-mcp      # a web UI to poke every feature
-After changing the code, rebuild and restart Claude Code (or run /mcp) to pick up the new binary.
-```
+To try this repository's server, follow [milestone 5](../milestones/05_ship.md#try-it-for-real) after completing it.
+Its binary is `cmd/devmcp`; the notes server here is a standalone worked example.
 
 **Worked example:**
 
@@ -341,7 +338,7 @@ func Serve(ctx context.Context, s *mcp.Server, in io.ReadCloser, out io.WriteClo
 **CONCEPT:** the host's side of stdio
 
 ```
-This is what Claude Code does with `claude mcp add notes -- go run ./cmd/notes-mcp`:
+This is what Claude Code does with `claude mcp add devmcp -- /absolute/path/to/bin/devmcp`:
   cmd := exec.Command(name, args...)
   t := &mcp.CommandTransport{Command: cmd}   // Connect starts cmd and wires its stdin/stdout
   cs, err := client.Connect(ctx, t, nil)

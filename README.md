@@ -8,6 +8,8 @@ It uses the official SDK, [`github.com/modelcontextprotocol/go-sdk`](https://git
 (v1.8.0). You need basic Go and a rough idea of what MCP is. If MCP is new to you, read the primer at the top of
 [`lessons/02_mcp_basics.md`](lessons/02_mcp_basics.md) (10 minutes) before milestone 1.
 
+**Requirements:** Go 1.26 or newer, on macOS or Linux. The test-runner helper uses Unix process groups.
+
 **Budget:** about 4.5–5.5 hours for milestones 1–5, plus about an hour for the optional milestone 6.
 
 ## How it works
@@ -56,6 +58,7 @@ make progress          # one line per milestone
 make build             # build bin/devmcp
 make compare M=02      # diff your code against checkpoint 02
 make checkpoint M=02   # back up your code to .backup/ and jump to checkpoint 02
+make verify            # maintainers: verify all checkpoints and the untouched starter
 ```
 
 ## Trying it in a real host

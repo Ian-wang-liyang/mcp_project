@@ -5,7 +5,7 @@
 #   make compare M=02      diff your server/ and cmd/ against checkpoint 02
 #   make checkpoint M=02   back up your code to .backup/, then replace it with checkpoint 02
 #   make build             build bin/devmcp
-#   make verify            (maintainers) every checkpoint passes its milestones; the starter fails them all
+#   make verify            (maintainers) checkpoints pass; the starter compiles and fails milestones 1–3
 .PHONY: check race progress compare checkpoint build verify
 CP = _checkpoints/$(M)
 
@@ -27,7 +27,8 @@ compare:
 
 checkpoint:
 	@test -d "$(CP)" || { echo "usage: make checkpoint M=02 (no $(CP))"; exit 2; }
-	@b=.backup/$$(date +%Y%m%d-%H%M%S); mkdir -p $$b; cp -R server $$b/; [ -d cmd ] && cp -R cmd $$b/ || true; \
+	@set -eu; mkdir -p .backup; b=$$(mktemp -d ".backup/$$(date +%Y%m%d-%H%M%S)-XXXXXX"); \
+	 cp -R server "$$b/"; if [ -d cmd ]; then cp -R cmd "$$b/"; fi; \
 	 rm -rf server cmd; cp -R $(CP)/. .; echo "your previous code is in $$b; now at checkpoint $(M)"
 
 build:

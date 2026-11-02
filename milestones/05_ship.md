@@ -79,7 +79,7 @@ The acceptance tests check exactly these.
    | `is_error` | `true` if the result has `IsError` set **or** the call failed with a protocol error |
 
    - Other requests (`tools/list`, `resources/read`, ...) are not logged.
-   - The writer doesn't have to be safe for concurrent use. A `bytes.Buffer` or an `*os.File` isn't. Your middleware
+   - The writer doesn't have to be safe for concurrent use. A `bytes.Buffer` isn't; an `*os.File` is. Your middleware
      must never call `Write` from two goroutines at once. The test drives many concurrent clients through a writer
      that notices overlapping writes.
    - A nil `AuditLog` means no auditing (and no crash).

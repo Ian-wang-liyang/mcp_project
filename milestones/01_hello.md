@@ -33,6 +33,7 @@ The acceptance tests check exactly these, over the MCP protocol.
    - It has a Description.
    - It is annotated `ReadOnlyHint: true`.
    - It has an output schema, which you get for free by returning a typed struct as `Out`.
+   - A `go.mod` symlink may point inside the workspace, but a link outside it must return a tool error.
 4. **`cmd/devmcp/main.go`:**
    - a `-root` flag (default `"."`) that feeds `Config.Root`
    - serves over stdio with `mcp.StdioTransport`
@@ -47,6 +48,7 @@ The acceptance tests check exactly these, over the MCP protocol.
    - Use a struct with `json:"..."` and `jsonschema:"..."` tags as the output type.
    - Use `struct{}` as the input type.
    - Parse go.mod line by line with `bufio.Scanner` and `strings.Fields`. No extra dependency is needed.
+   - Open it with `os.OpenInRoot(ws.root, "go.mod")` so a symlink cannot read outside the workspace.
 4. Write `main.go` and run the whole check.
 
 ## Hints
@@ -69,8 +71,8 @@ On macOS, temp dirs live under `/var/...`, which is a symlink to `/private/var/.
 
 <details><summary>TestBinaryOverStdio can't connect</summary>
 
-- Something is probably writing to stdout. `fmt.Println` and the default `log` setup both corrupt the JSON-RPC
-  stream; use `log.SetOutput(os.Stderr)`.
+- Something is probably writing to stdout. `fmt.Println` corrupts the JSON-RPC stream. The standard logger already
+  uses stderr; `log.SetOutput(os.Stderr)` makes that choice explicit.
 - Also check that `main` calls `s.Run(ctx, &mcp.StdioTransport{})`, which blocks until the client hangs up.
 - Use `signal.NotifyContext` so Ctrl-C shuts down cleanly.
 </details>

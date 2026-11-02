@@ -4,6 +4,7 @@ package m01
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -92,6 +93,46 @@ func TestWorkspaceInfoWithoutGoMod(t *testing.T) {
 	got := harness.Structured[workspaceInfo](t, res)
 	if got.Root != ws || got.Module != "" || got.GoVersion != "" {
 		t.Errorf("workspace_info = %+v, want root %q and empty module/go_version", got, ws)
+	}
+}
+
+// workspace_info must not read a go.mod symlink that leaves the workspace.
+func TestWorkspaceInfoSymlink(t *testing.T) {
+	for _, outside := range []bool{false, true} {
+		t.Run(fmt.Sprintf("outside=%v", outside), func(t *testing.T) {
+			ws := harness.Workspace(t)
+			target := filepath.Join(ws, "module.txt")
+			if outside {
+				target = filepath.Join(t.TempDir(), "module.txt")
+			}
+			if err := os.WriteFile(target, []byte("module example.com/linked\ngo 1.26\n"), 0o644); err != nil {
+				t.Fatal(err)
+			}
+			if err := os.Remove(filepath.Join(ws, "go.mod")); err != nil {
+				t.Fatal(err)
+			}
+			link, err := filepath.Rel(ws, target)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if err := os.Symlink(link, filepath.Join(ws, "go.mod")); err != nil {
+				t.Fatal(err)
+			}
+			cs := harness.Connect(t, server.Config{Root: ws}, nil)
+			res := harness.CallTool(t, cs, "workspace_info", map[string]any{})
+			if outside {
+				if !res.IsError {
+					t.Fatal("workspace_info read go.mod outside the workspace through a symlink")
+				}
+				return
+			}
+			if res.IsError {
+				t.Fatalf("workspace_info rejected an internal symlink: %s", harness.Text(res))
+			}
+			if got := harness.Structured[workspaceInfo](t, res); got.Module != "example.com/linked" {
+				t.Errorf("module = %q, want example.com/linked", got.Module)
+			}
+		})
 	}
 }
 

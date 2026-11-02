@@ -55,7 +55,7 @@ relative to the workspace root, like `internal/strutil/reverse.go`.
    Treating "outside" the same as "missing" is deliberate: a client learns nothing about what exists beyond the root.
 4. **Static resources.** `New` also registers `workspace:///go.mod` and `workspace:///README.md` with `s.AddResource`, each
    with a non-empty Name, **but only when the file exists**. This puts them in `resources/list`. Reading them gives the same
-   result as reading through the template.
+   result as reading through the template. Omit symlinks that point outside the workspace.
 5. **Prompt `review_file`** with a Description and two arguments:
    - `path`, with `Required: true`
    - `focus`, with `Required: false`
@@ -64,6 +64,8 @@ relative to the workspace root, like `internal/strutil/reverse.go`.
    - a `TextContent` asking for a code review. When `focus` is given, the text must contain it.
    - an `EmbeddedResource` whose `Resource` is the file's contents: `URI` `workspace:///<path>`, plus the same `Text`
      and `MIMEType` a resource read would give.
+     Percent-encode reserved characters in the path, so reading that URI returns the same file even when its name
+     contains `%`, `#`, `?`, or spaces. Decode those escapes before checking the path in the resource handler.
 6. **review_file errors.**
    - A missing or empty `path` fails with a `*jsonrpc.Error` with Code `jsonrpc.CodeInvalidParams`, and its Message must
      name `path`.
@@ -74,6 +76,7 @@ relative to the workspace root, like `internal/strutil/reverse.go`.
    - Return the workspace's regular files whose *path* starts with the typed value, sorted, at most 100.
    - Set `HasMore: true` when you dropped some.
    - Skip hidden entries (names starting with `.`, such as `.git`).
+   - When nothing matches, return `Values: []string{}`, never `null`.
    - For any other prompt or argument, return an empty `Values` slice and no error.
 
 ## Suggested steps
@@ -88,7 +91,7 @@ relative to the workspace root, like `internal/strutil/reverse.go`.
 3. **Not found.** Turn every "can't read that" into `mcp.ResourceNotFoundError`. Then try to break out of the workspace
    until `TestReadOutsideWorkspace` and `TestReadSymlinkOutside` pass.
    - Put the read logic in one function that takes a path and returns `*mcp.ResourceContents`. Step 5 reuses it.
-4. **Static resources.** In `New`, `os.Stat` each of the two files and call `s.AddResource` with the **same** handler.
+4. **Static resources.** In `New`, use `os.Root.Stat` on each of the two files and call `s.AddResource` with the **same** handler.
 5. **The prompt.** Use `s.AddPrompt`, validate `path`, read the file with your step-3 function, and return two messages.
 6. **Bonus.** Walk the workspace with `filepath.WalkDir` and filter by prefix.
 
@@ -105,9 +108,11 @@ You registered `workspace:///{path}`. A simple `{path}` expansion matches a sing
 
 The handler receives the whole URI, so use `rel, ok := strings.CutPrefix(req.Params.URI, "workspace:///")`.
 
-Decoding `%XX` escapes with `url.PathUnescape` is optional. It's nice for file names with spaces, but if you do it, do it
-**before** the safety check. Otherwise `..%2Fsecret.txt` passes the check as an odd file name and only becomes
-`../secret.txt` after it.
+Decode `%XX` escapes with `url.PathUnescape` **before** the safety check. Otherwise `..%2Fsecret.txt` passes the check
+as an odd file name and only becomes `../secret.txt` after it.
+
+For the prompt's embedded URI, use `"workspace:///" + (&url.URL{Path: p}).EscapedPath()`. This escapes reserved
+characters while keeping the slashes between path segments.
 </details>
 
 <details><summary>The symlink test leaks the secret</summary>
