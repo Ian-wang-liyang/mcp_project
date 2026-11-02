@@ -154,6 +154,14 @@ to read those.
 - Skip anything that isn't a regular file (`!d.Type().IsRegular()`). That also skips symlinks; see the stretch goals.
 </details>
 
+<details><summary>Symlinks in the <code>dir</code> you were given</summary>
+
+Skipping symlinks during the walk isn't enough for `list_files`. If the workspace has `link -> /etc`, then
+`dir: "link/sub"` passes the lexical check, and the OS follows `link` when the walk starts, so you'd list files
+outside the workspace. Before walking, `filepath.EvalSymlinks(dir)` and check that the result is still under the
+root (`filepath.Rel` plus `filepath.IsLocal`). The tests don't check this, but a malicious repo could.
+</details>
+
 <details><summary>Nil vs empty slices</summary>
 
 A nil slice marshals as `null`, so the client sees `"files": null`. The tests accept that, but `[]` is friendlier to

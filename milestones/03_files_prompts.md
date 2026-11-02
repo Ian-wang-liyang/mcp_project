@@ -113,8 +113,9 @@ Decoding `%XX` escapes with `url.PathUnescape` is optional. It's nice for file n
 <details><summary>The symlink test leaks the secret</summary>
 
 Milestone 2's `resolve` checks the path lexically: it sees only `leak.txt`, which is a perfectly local name. (In milestone 2
-the walks simply skipped symlinks.) Here the escape happens when the OS follows the link. `os.Root` (Go 1.24+; `ReadFile`
-since 1.25) does the safe thing for you, as milestone 2's stretch goals mentioned:
+the walks skipped symlinks, and `list_files` checked its `dir` with `filepath.EvalSymlinks`.) Here the escape happens
+when the OS follows the link. `os.Root` (Go 1.24+; `ReadFile` since 1.25) does the safe thing for you, as milestone 2's
+stretch goals mentioned:
 
 ```go
 root, err := os.OpenRoot(ws.root)

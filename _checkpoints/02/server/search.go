@@ -69,6 +69,15 @@ func addSearchTools(s *mcp.Server, ws *workspace) {
 		if !info.IsDir() {
 			return nil, listFilesResult{}, fmt.Errorf("%q is not a directory", in.Dir)
 		}
+		// resolve is lexical, so "link/sub" passes even when link is a symlink to somewhere else,
+		// and the OS follows it when the walk starts. Check where the directory really is.
+		real, err := filepath.EvalSymlinks(dir)
+		if err != nil {
+			return nil, listFilesResult{}, err
+		}
+		if rel, err := filepath.Rel(ws.root, real); err != nil || !filepath.IsLocal(rel) && rel != "." {
+			return nil, listFilesResult{}, fmt.Errorf("%w: %q leads out through a symlink", errOutside, in.Dir)
+		}
 		files, err := searchWalk(ctx, ws.root, dir, in.Pattern)
 		if err != nil {
 			return nil, listFilesResult{}, err
@@ -139,10 +148,10 @@ func searchCheckGlob(glob string) error {
 	return nil
 }
 
-// searchWalk returns the regular files under dir (absolute, inside root) whose base name matches glob
-// (empty matches all), as sorted slash-separated paths relative to root. It skips every entry whose
-// name starts with "." except dir itself, and anything that isn't a regular file (symlinks included,
-// so the walk can never be led outside the workspace).
+// searchWalk returns the regular files under dir whose base name matches glob (empty matches all), as
+// sorted slash-separated paths relative to root. It skips every entry whose name starts with "." except
+// dir itself, and anything that isn't a regular file (symlinks included, so the walk never leaves dir).
+// The caller must check that dir itself really is inside root: the OS follows symlinks in dir's path.
 func searchWalk(ctx context.Context, root, dir, glob string) ([]string, error) {
 	files := []string{}
 	err := filepath.WalkDir(dir, func(p string, d fs.DirEntry, err error) error {
